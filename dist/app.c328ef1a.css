@@ -1,0 +1,142 @@
+/**
+ * @tableofcontents
+ *
+ * 1. harmonize
+ */
+
+/** @section 1. harmonize */
+
+blockquote,
+body,
+dd,
+dl,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+fieldset,
+ol,
+p,
+ul
+{
+	margin: 0;
+}
+
+button,
+dialog,
+fieldset,
+legend,
+ol,
+ul
+{
+	padding: 0;
+}
+
+ol,
+ul
+{
+	list-style-type: none;
+}
+
+table
+{
+	border-collapse: collapse;
+}
+
+a
+{
+	color: inherit;
+	text-decoration: none;
+}
+
+dialog
+{
+	background: none;
+}
+
+button
+{
+	cursor: pointer;
+}
+
+button,
+input,
+select,
+textarea
+{
+	-webkit-box-sizing: border-box;
+	        box-sizing: border-box;
+	font: inherit;
+}
+
+button,
+dialog,
+input,
+img,
+fieldset,
+select,
+textarea
+{
+	border: 0;
+}
+
+button::-moz-focus-inner,
+input[type="button"]::-moz-focus-inner,
+input[type="reset"]::-moz-focus-inner,
+input[type="submit"]::-moz-focus-inner
+{
+	border: 0;
+}
+
+:focus
+{
+	outline: 0;
+}
+
+input:invalid,
+select:invalid,
+textarea:invalid
+{
+	-webkit-box-shadow: none;
+	        box-shadow: none;
+	outline: none;
+}
+
+button[disabled],
+input[disabled],
+input[readonly]
+{
+	pointer-events: none;
+}
+
+input[type="search"]
+{
+	border-radius: 0;
+}
+
+input[type="search"]::-ms-clear
+{
+	display: none;
+}
+
+input[type="search"],
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration
+{
+	-webkit-appearance: none;
+}
+
+audio,
+img,
+video
+{
+	max-width: 100%;
+}
+
+body {
+  background: #FF0000;
+}
+
+/*# sourceMappingURL=/app.c328ef1a.css.map */
