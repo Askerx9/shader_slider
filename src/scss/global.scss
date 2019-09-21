@@ -1,5 +1,72 @@
+@import url('https://fonts.googleapis.com/css?family=Work+Sans:100,900&display=swap');
+
 body{
-  background: $color;
-  // transform: translate(-50%,-50%);
-  // display: flex;
+  font-family: 'work sans';
+  font-weight: 100;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.slider__img{
+  position: absolute;
+  opacity: 0;
+}
+
+.country{
+
+  & li{
+    position: absolute;
+    font-weight: 100;
+    font-size: .5em;
+    top: 35%;
+    transform: translateY(-50%);
+    transform-origin: 0% 50%;
+    z-index: 10;
+    transition: color .15s ease-in-out, transform .15s ease-in-out;
+
+
+    &.actif{
+      font-size: 2.5em;
+      left: 20%;
+    }
+
+    &.prev,
+    &.next{
+      cursor: pointer;
+    }
+
+    &.next{
+      right: 0;
+      transform-origin: 100% 50%;
+    }
+
+    &.prev:hover,
+    &.next:hover{
+      color: #F28627;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+  }
+
+
+}
+
+.name{
+  font-weight: 900;
+  font-size: 4em;
+}
+
+.gradient{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  background: rgb(255,255,255);
+  background: radial-gradient(closest-side, rgba(7, 93, 186, 0.05) 56%, rgba(6, 49, 82, 0.502) 100%) center;
+  background-size: 150% 100%;
+}
+
+canvas{
+  display: block;
 }
