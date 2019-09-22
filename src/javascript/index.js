@@ -3,12 +3,14 @@ import { TweenMax } from 'gsap'
 import vertex from "./shaders/vertex.glsl";
 import fragment from "./shaders/fragment.glsl";
 
-import displacementMap from "../images/LkpXNHm.jpg";
+import displacementMap from "../images/04.png";
 const imgs = Array.from(document.querySelectorAll('.slider__img'));
+
 
 PIXI.useDeprecated();
 
-const app = new PIXI.Application({
+document.addEventListener('DOMContentLoaded', () => {
+  const app = new PIXI.Application({
     width: window.innerWidth,
     height: window.innerHeight,
     resizeTo: window,
@@ -16,59 +18,75 @@ const app = new PIXI.Application({
     resolution: window.devicePixelRatio || 1,
     transparent: true,
     autoResize: true
-});
-app.renderer.autoDensity = true;
+  });
+  const container = new PIXI.Container();
+  let lastIndex = 0;
 
-document.body.appendChild(app.view);
+  // Init
 
-const geometry = new PIXI.Geometry()
-    .addAttribute('aVertexPosition',
-      [
-      -350, 350,
-      0, 350,
-      350, 0,
-      -350, -350,
-      0, 350,
-      -350, 0
-      ], 3)
-    .addAttribute('aUvs',
-        [
-    0, 1,
-    1, 1,
-    0, 0,
-    1, 0
-        ], 2)
-    .addIndex([0, 2, 1, 2, 3, 1])
-let uniforms = {
-  effectFactor: 0.6,
-  currentImage : PIXI.Texture.from(imgs[1].src),
-  nextImage : PIXI.Texture.from(imgs[2].src),
-  displacement: PIXI.Texture.from(displacementMap),
-  dispFactor : 0.0,
-}
-const shader = PIXI.Shader.from(vertex, fragment, uniforms);
-const quad = new PIXI.Mesh(geometry, shader);
+  document.body.append(app.view)
+  app.stage.addChild(container)
 
-quad.position.set(window.innerWidth / 2, window.innerHeight / 2);
+  // Load Image
 
-app.stage.addChild(quad);
+  const loader = new PIXI.Loader();
 
-requestAnimationFrame(animate);
+  imgs.forEach((img, index) => {
+    console.log(img)
+    loader.add(
+      `img${index}`,
+      img.src
+    )
+  })
 
-function animate(){
-  requestAnimationFrame(animate);
-  app.render(app.stage);
-}
+  loader.add(
+    'disp',
+    displacementMap
+  )
 
-document.body.addEventListener('mouseenter', function() {
-	TweenMax.to(shader.uniformGroup.uniforms, 1, {
-		dispFactor: 1,
-		ease: Expo.easeOut
-	});
-});
-document.body.addEventListener('mouseleave', function() {
-	TweenMax.to(shader.uniformGroup.uniforms, 0.5, {
-		dispFactor: 0,
-		ease: Expo.easeOut
-	});
-});
+  loader.load((loader, resources) => {
+    const { img0, img1, img2, disp } = resources
+    const images = Object.values(resources)
+    const uniforms = {
+      u_time: 0,
+      u_resolution: [window.innerWidth, window.innerHeight],
+      u_mouse: [0 , 0],
+      u_text0: img0.texture,
+      u_text1: img1.texture,
+      disp: disp.texture,
+      effectFactor: .1,
+      dispFactor: 0,
+      u_progress: 0
+    }
+    const filter = new PIXI.Filter(null, fragment, uniforms)
+    const text = new PIXI.Sprite(img0.texture)
+    text.filters = [filter]
+
+    // Resize
+    const imageRatio = text.width / text.width
+    const canvasRatio = window.innerWidth / window.innerHeight
+
+    uniforms.aspectRatio =
+    [1,imageRatio / canvasRatio]
+    // canvasRatio > imageRatio
+    // ? [1, imageRatio / canvasRatio]
+    // : [imageRatio / canvasRatio, 1]
+
+    app.stage.scale.set(1)
+
+    container.addChild(text)
+
+    document.body.addEventListener('mouseenter', function() {
+      TweenMax.to(filter.uniformGroup.uniforms, 1.2, {
+        dispFactor: 1,
+        ease: Expo.easeOut
+      });
+    });
+    document.body.addEventListener('mouseleave', function() {
+      TweenMax.to(filter.uniformGroup.uniforms, 0.5, {
+        dispFactor: 0,
+        ease: Expo.easeOut
+      });
+    });
+  })
+})
