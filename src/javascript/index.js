@@ -1,26 +1,27 @@
 import * as PIXI from 'pixi.js'
-import { TweenMax } from 'gsap'
+import { TweenMax, TimelineMax } from 'gsap'
 import vertex from "./shaders/vertex.glsl";
 import fragment from "./shaders/fragment.glsl";
-
 import displacementMap from "../images/04.png";
+
 const imgs = Array.from(document.querySelectorAll('.slider__img'));
+const width = window.innerWidth
+const height = window.innerHeight
 
-
-PIXI.useDeprecated();
 
 document.addEventListener('DOMContentLoaded', () => {
   const app = new PIXI.Application({
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: width,
+    height: height,
     resizeTo: window,
     antialias: false,
     resolution: window.devicePixelRatio || 1,
     transparent: true,
-    autoResize: true
+    // autoResize: true
   });
   const container = new PIXI.Container();
-  let lastIndex = 0;
+  let lastIndex = 'img0';
+  var isAnimating = false;
 
   // Init
 
@@ -32,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const loader = new PIXI.Loader();
 
   imgs.forEach((img, index) => {
-    console.log(img)
     loader.add(
       `img${index}`,
       img.src
@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
   loader.load((loader, resources) => {
     const { img0, img1, img2, disp } = resources
     const images = Object.values(resources)
-    const uniforms = {
+    let uniforms = {
       u_time: 0,
-      u_resolution: [window.innerWidth, window.innerHeight],
+      u_resolution: [width, height],
       u_mouse: [0 , 0],
       u_text0: img0.texture,
       u_text1: img1.texture,
@@ -60,33 +60,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const filter = new PIXI.Filter(null, fragment, uniforms)
     const text = new PIXI.Sprite(img0.texture)
+
     text.filters = [filter]
 
     // Resize
-    const imageRatio = text.width / text.width
-    const canvasRatio = window.innerWidth / window.innerHeight
+
+    app.renderer.resize(width, height);
+
+    const imageRatio = text.width / text.height
+    const canvasRatio = width / height
 
     uniforms.aspectRatio =
-    [1,imageRatio / canvasRatio]
-    // canvasRatio > imageRatio
-    // ? [1, imageRatio / canvasRatio]
-    // : [imageRatio / canvasRatio, 1]
-
-    app.stage.scale.set(1)
+    canvasRatio > imageRatio
+    ? [1, imageRatio / canvasRatio]
+    : [imageRatio / canvasRatio, 1]
 
     container.addChild(text)
 
-    document.body.addEventListener('mouseenter', function() {
-      TweenMax.to(filter.uniformGroup.uniforms, 1.2, {
-        dispFactor: 1,
-        ease: Expo.easeOut
-      });
-    });
-    document.body.addEventListener('mouseleave', function() {
-      TweenMax.to(filter.uniformGroup.uniforms, 0.5, {
-        dispFactor: 0,
-        ease: Expo.easeOut
-      });
-    });
+    const sliderEl = Array.from(document.querySelectorAll('.slider__el'))
+
+    sliderEl.forEach((el, index) => {
+
+      el.addEventListener('click', function() {
+        const img = el.getAttribute('data-index');
+        if(!isAnimating && lastIndex != img){
+          isAnimating = true;
+
+          const tl = new TimelineMax({onComplete: function(){
+            lastIndex = img;
+            uniforms.u_text0 = resources[img].texture;
+            uniforms.dispFactor = 0;
+            isAnimating = false;
+          }});
+
+          uniforms.u_text0 = resources[lastIndex].texture;
+          uniforms.u_text1 = resources[img].texture;
+
+          tl.to(filter.uniformGroup.uniforms, 1.2, {
+            dispFactor: 1,
+            ease: Expo.easeOut
+          })
+        }
+      })
+    })
+
   })
 })

@@ -10,6 +10,7 @@ body{
 .slider__img{
   position: absolute;
   opacity: 0;
+  display: none;
 }
 
 .country{
@@ -67,6 +68,12 @@ body{
   background-size: 150% 100%;
 }
 
+#content-canvas{
+  display: flex;
+  justify-content: center;
+}
+
 canvas{
   display: block;
+  max-width: 100%;
 }
