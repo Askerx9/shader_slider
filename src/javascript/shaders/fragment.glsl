@@ -31,8 +31,7 @@ void main(void){
 
     vec2 fuv = fract(uv * vec2(20., 20.));
 
-
-    vec4 disp = texture2D(disp, fuv);
+    vec4 disp = texture2D(disp, uv);
 
     vec2 uvDisplaced = vec2(uv.x + dispFactor * (disp.r*effectFactor), uv.y);
     vec2 uvDisplaced1 = vec2(uv.x - (1.0 - dispFactor) * (disp.r*effectFactor), uv.y);

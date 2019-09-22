@@ -3,6 +3,7 @@ import { TweenMax, TimelineMax } from 'gsap'
 import vertex from "./shaders/vertex.glsl";
 import fragment from "./shaders/fragment.glsl";
 import displacementMap from "../images/04.png";
+// import displacementMap from "../images/0.jpg";
 
 const imgs = Array.from(document.querySelectorAll('.slider__img'));
 const width = window.innerWidth
@@ -70,10 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageRatio = text.width / text.height
     const canvasRatio = width / height
 
+    console.log(canvasRatio > imageRatio)
+
     uniforms.aspectRatio =
     canvasRatio > imageRatio
     ? [1, imageRatio / canvasRatio]
-    : [imageRatio / canvasRatio, 1]
+    : [canvasRatio / imageRatio , 1]
 
     container.addChild(text)
 
